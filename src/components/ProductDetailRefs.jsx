@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import React, { useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import useFetch from "../hooks/useFetch";
 import PageNotFound from "./PageNotFound";
 import Spinner from "./Spinner";
 
-export default function ProductDetail({ dispatch }) {
+export default function ProductDetailRefs({ addToCart }) {
   const { id } = useParams();
+  const skuRef = useRef();
   const navigate = useNavigate();
-  const [sku, setSku] = useState("");
   const { data: product, error, loading } = useFetch(`products/${id}`);
 
   if (error) throw error;
@@ -19,7 +19,7 @@ export default function ProductDetail({ dispatch }) {
       <h1>{product.name}</h1>
       <p>{product.description}</p>
       <p id="price">{product.price}</p>
-      <select id="size" value={sku} onChange={(e) => setSku(e.target.value)}>
+      <select id="size" ref={skuRef}>
         <option value="">What Size?</option>
         {product.skus.map((p) => {
           return (
@@ -31,10 +31,11 @@ export default function ProductDetail({ dispatch }) {
       </select>
       <p>
         <button
-          disabled={!sku}
           className="btn btn-primary"
           onClick={() => {
-            dispatch({ type: "add", id, sku });
+            const sku = skuRef.current.value;
+            if (!sku) return alert("Select Size.");
+            addToCart(id, sku);
             navigate("/cart");
           }}
         >

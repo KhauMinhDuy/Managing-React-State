@@ -1,13 +1,26 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 const baseUrl = process.env.REACT_APP_API_BASE_URL;
 
+function equalsArray(array1, array2) {
+  return (
+    array1.length === array2.length &&
+    array1.every((value, index) => value === array2[index])
+  );
+}
+
 export default function useFetchAll(urls) {
+  const prevUrlsRef = useRef([]);
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (equalsArray(prevUrlsRef.current, urls)) {
+      setLoading(false);
+      return;
+    }
+    prevUrlsRef.current = urls;
     const promisses = urls.map((url) => {
       return fetch(baseUrl + url).then((response) => {
         if (response.ok) {
@@ -23,7 +36,7 @@ export default function useFetchAll(urls) {
         setError(err);
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [urls]);
 
   return { data, error, loading };
 }
