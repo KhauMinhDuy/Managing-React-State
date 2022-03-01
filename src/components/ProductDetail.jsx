@@ -3,8 +3,10 @@ import { useParams, useNavigate } from "react-router-dom";
 import useFetch from "../hooks/useFetch";
 import PageNotFound from "./PageNotFound";
 import Spinner from "./Spinner";
+import { useCartContext } from "../contexts/cartContext";
 
-export default function ProductDetail({ dispatch }) {
+export default function ProductDetail() {
+  const { dispatch } = useCartContext();
   const { id } = useParams();
   const navigate = useNavigate();
   const [sku, setSku] = useState("");

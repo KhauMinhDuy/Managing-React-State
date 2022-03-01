@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer } from "react";
+import React from "react";
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import Products from "./components/Products";
@@ -9,57 +9,8 @@ import Cart from "./components/Cart";
 import Home from "./components/Home";
 import PageNotFound from "./components/PageNotFound";
 import Checkout from "./components/Checkout";
-import cartReducer from "./reducer/CartReducer";
-
-let initialize;
-try {
-  initialize = JSON.parse(localStorage.getItem("cart")) ?? [];
-} catch (e) {
-  console.log(e);
-  initialize = [];
-}
 
 export default function App() {
-  // const [cart, setCart] = useState(() => {
-  //   try {
-  //     return JSON.parse(localStorage.getItem("cart")) ?? [];
-  //   } catch (e) {
-  //     console.log(e);
-  //     return [];
-  //   }
-  // });
-
-  const [cart, dispatch] = useReducer(cartReducer, initialize);
-
-  useEffect(() => localStorage.setItem("cart", JSON.stringify(cart)), [cart]);
-
-  // function addToCart(id, sku) {
-  //   setCart((items) => {
-  //     const itemInCart = items.find((item) => item.sku === sku);
-  //     if (itemInCart) {
-  //       return items.map((item) =>
-  //         item.sku === sku ? { ...item, quantity: item.quantity + 1 } : item
-  //       );
-  //     } else {
-  //       return [...items, { id, sku, quantity: 1 }];
-  //     }
-  //   });
-  // }
-
-  // function updateQuantity(sku, quantity) {
-  //   setCart((items) => {
-  //     return quantity === 0
-  //       ? items.filter((item) => item.sku !== sku)
-  //       : items.map((item) =>
-  //           item.sku === sku ? { ...item, quantity } : item
-  //         );
-  //   });
-  // }
-
-  // function clearCart() {
-  //   setCart([]);
-  // }
-
   return (
     <>
       <div className="content">
@@ -68,18 +19,9 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/:category" element={<Products />} />
-            <Route
-              path="/:category/:id"
-              element={<ProductDetail dispatch={dispatch} />}
-            />
-            <Route
-              path="/cart"
-              element={<Cart cart={cart} dispatch={dispatch} />}
-            />
-            <Route
-              path="/checkout"
-              element={<Checkout cart={cart} dispatch={dispatch} />}
-            />
+            <Route path="/:category/:id" element={<ProductDetail />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/checkout" element={<Checkout />} />
             <Route path="*" element={<PageNotFound />} />
           </Routes>
         </main>
