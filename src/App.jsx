@@ -1,29 +1,58 @@
-import React from "react";
-import { Route, Routes } from "react-router-dom";
+import React, { useState } from "react";
 import "./App.css";
-import Products from "./components/Products";
-import Footer from "./components/Footer";
-import Header from "./components/Header";
-import ProductDetail from "./components/ProductDetail";
-import Cart from "./components/Cart";
-import Home from "./components/Home";
-import PageNotFound from "./components/PageNotFound";
-import Checkout from "./components/Checkout";
+import Footer from "./Footer";
+import Header from "./Header";
+import Spinner from "./Spinner";
+import useFetch from "./services/useFetch";
 
 export default function App() {
+  const [size, setSize] = useState("");
+
+  const {
+    data: products,
+    error,
+    loading,
+  } = useFetch("products?category=shoes");
+
+  function renderProduct(p) {
+    return (
+      <div key={p.id} className="product">
+        <a href="/">
+          <img src={`/images/${p.image}`} alt={p.name} />
+          <h3>{p.name}</h3>
+          <p>${p.price}</p>
+        </a>
+      </div>
+    );
+  }
+
+  const filterProduct = size
+    ? products.filter((p) => p.skus.find((s) => s.size === parseInt(size)))
+    : products;
+
+  if (error) throw error;
+  if (loading) return <Spinner />;
+
   return (
     <>
       <div className="content">
         <Header />
         <main>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/:category" element={<Products />} />
-            <Route path="/:category/:id" element={<ProductDetail />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/checkout" element={<Checkout />} />
-            <Route path="*" element={<PageNotFound />} />
-          </Routes>
+          <section id="filters">
+            <label htmlFor="size">Filter by Size:</label>{" "}
+            <select
+              id="size"
+              value={size}
+              onChange={(e) => setSize(e.target.value)}
+            >
+              <option value="">All sizes</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+            </select>
+            {size && <h2>Found {filterProduct.length} items</h2>}
+          </section>
+          <section id="products">{filterProduct.map(renderProduct)}</section>
         </main>
       </div>
       <Footer />

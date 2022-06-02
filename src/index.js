@@ -1,17 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
-import ErrorBoundary from "./errors/ErrorBoundary";
-import { BrowserRouter } from "react-router-dom";
-import { CartProvider } from "./contexts/cartContext";
+import ErrorBoundary from "./ErrorBoundaty";
 
 ReactDOM.render(
   <ErrorBoundary>
-    <BrowserRouter>
-      <CartProvider>
-        <App />
-      </CartProvider>
-    </BrowserRouter>
+    <App />
   </ErrorBoundary>,
   document.getElementById("root")
 );
